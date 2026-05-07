@@ -28,3 +28,5 @@ flutter:
         pluginClass: FlutterBiometricChangeDetectorPlugin
       ios:
         pluginClass: FlutterBiometricChangeDetectorPlugin
+      ohos:
+        pluginClass: FlutterBiometricChangeDetectorPlugin

@@ -26,4 +26,10 @@ class FlutterBiometricChangeDetector {
     return FlutterBiometricChangeDetectorPlatform.instance
         .checkBiometricAndroid();
   }
+
+  /// HarmonyOS only
+  static Future<AuthChangeStatus?> checkBiometricOhos() {
+    return FlutterBiometricChangeDetectorPlatform.instance
+        .checkBiometricOhos();
+  }
 }

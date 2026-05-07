@@ -34,6 +34,10 @@ abstract class FlutterBiometricChangeDetectorPlatform
   /// Returns an AuthChangeStatus based on the biometric status.
   Future<AuthChangeStatus?> checkBiometricAndroid();
 
+  /// Method to check if biometric authentication is available and valid on HarmonyOS devices.
+  /// Returns an AuthChangeStatus based on the biometric status.
+  Future<AuthChangeStatus?> checkBiometricOhos();
+
   /// Method to detect any changes in biometric authentication.
   /// Returns an AuthChangeStatus to reflect if biometric credentials have changed.
   Future<AuthChangeStatus?> detectBiometricChange();

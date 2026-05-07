@@ -1,0 +1,11 @@
+{
+  "name": "flutter_biometric_change_detector",
+  "version": "1.0.0",
+  "description": "Flutter plugin to detect changes in biometric authentication status on HarmonyOS.",
+  "main": "index.ets",
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@ohos/flutter_ohos": "file:libs/flutter.har"
+  }
+}

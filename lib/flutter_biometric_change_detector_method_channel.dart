@@ -16,9 +16,13 @@ class MethodChannelFlutterBiometricChangeDetector
   @override
   Future<AuthChangeStatus?> detectBiometricChange() async {
     try {
-      return Platform.isIOS
-          ? await checkBiometricIOS()
-          : await checkBiometricAndroid();
+      if (Platform.isIOS) {
+        return await checkBiometricIOS();
+      } else if (Platform.operatingSystem == 'ohos') {
+        return await checkBiometricOhos();
+      } else {
+        return await checkBiometricAndroid();
+      }
     } catch (e) {
       if (kDebugMode) print("Error checking biometric status: ${e.toString()}");
       return AuthChangeStatus.UNKNOWN;
@@ -61,6 +65,32 @@ class MethodChannelFlutterBiometricChangeDetector
         default:
           return null;
       }
+    } on MissingPluginException catch (e) {
+      debugPrint(e.message);
+      return null;
+    }
+  }
+
+  /// For HarmonyOS (Fingerprint only)
+  /// Compares credentialDigest and credentialCount with previously stored values.
+  @override
+  Future<AuthChangeStatus?> checkBiometricOhos() async {
+    try {
+      final String result =
+          await methodChannel.invokeMethod('checkBiometricChange');
+      switch (result) {
+        case "biometricChanged":
+          return AuthChangeStatus.CHANGED;
+        case "biometricValid":
+          return AuthChangeStatus.VALID;
+        case "unknown":
+          return AuthChangeStatus.UNKNOWN;
+        default:
+          return AuthChangeStatus.INVALID;
+      }
+    } on PlatformException catch (e) {
+      if (kDebugMode) print("Error checking biometric status: ${e.message}");
+      return AuthChangeStatus.INVALID;
     } on MissingPluginException catch (e) {
       debugPrint(e.message);
       return null;
