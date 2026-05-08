@@ -1,6 +1,6 @@
 # flutter_biometric_change_detector
 
-A Flutter plugin to detect changes in biometric authentication status on Android and iOS.
+A Flutter plugin to detect changes in biometric authentication status on Android,iOS and Ohos(鸿蒙).
 
 ## Inspiration
 
