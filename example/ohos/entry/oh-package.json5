@@ -1,12 +1,20 @@
 {
-  "name": "entry",
+  "modelVersion": "5.0.0",
+  "name": "apptemplate",
   "version": "1.0.0",
   "description": "Please describe the basic information.",
   "main": "",
   "author": "",
   "license": "",
   "dependencies": {
-    "flutter_biometric_change_detector": "file:../har/flutter_biometric_change_detector.har",
-    "@ohos/flutter_ohos": "har/flutter.har"
+    "@ohos/flutter_ohos": "har/flutter.har",
+    "integration_test": "file:../har/integration_test.har",
+    "flutter_biometric_change_detector": "file:../har/flutter_biometric_change_detector.har"
+  },
+  "devDependencies": {
+    "@ohos/hypium": "1.0.6"
+  },
+  "overrides": {
+    "@ohos/flutter_ohos": "file:./har/flutter.har"
   }
 }

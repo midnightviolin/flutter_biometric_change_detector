@@ -6,10 +6,9 @@ import {
   MethodChannel,
   MethodResult,
 } from '@ohos/flutter_ohos';
-import { userAuth } from '@ohos.userIAM.userAuth';
-import { preferences } from '@ohos.data.preferences';
-import { Context } from '@ohos.abilityKit';
-import { BusinessError } from '@ohos.base';
+import { userAuth } from '@kit.UserAuthenticationKit';
+import preferences from '@ohos.data.preferences';
+import { BusinessError } from '@kit.BasicServicesKit';
 
 const CHANNEL_NAME = 'BIOMETRIC_CHANGE';
 const PREFS_NAME = 'biometric_change_prefs';
@@ -50,37 +49,52 @@ export default class FlutterBiometricChangeDetectorPlugin
   }
 
   private checkForBiometricChanges(result: MethodResult): void {
-    try {
-      const enrolledState = userAuth.getEnrolledState(userAuth.UserAuthType.FINGERPRINT);
-      const currentDigest = enrolledState.credentialDigest;
-      const currentCount = enrolledState.credentialCount;
+    let enrolledState: userAuth.EnrolledState | null = null;
 
-      preferences.getPreferences(this.context!, PREFS_NAME).then((prefs: preferences.Preferences) => {
-        const storedDigest = prefs.getSync(KEY_CREDENTIAL_DIGEST, INVALID_VALUE) as number;
-        const storedCount = prefs.getSync(KEY_CREDENTIAL_COUNT, INVALID_VALUE) as number;
-
-        let status: string;
-
-        if (storedDigest === INVALID_VALUE) {
-          status = 'biometricValid';
-        } else if (currentDigest !== storedDigest) {
-          status = 'biometricChanged';
-        } else if (currentCount < storedCount) {
-          status = 'biometricChanged';
-        } else {
-          status = 'biometricValid';
-        }
-
-        prefs.putSync(KEY_CREDENTIAL_DIGEST, currentDigest);
-        prefs.putSync(KEY_CREDENTIAL_COUNT, currentCount);
-        prefs.flush();
-
-        result.success(status);
-      }).catch((err: BusinessError) => {
-        result.success('unknown');
-      });
-    } catch (e) {
-      result.success('unknown');
+    const authTypes: userAuth.UserAuthType[] = [
+      userAuth.UserAuthType.FINGERPRINT,
+      userAuth.UserAuthType.FACE,
+    ];
+    for (const authType of authTypes) {
+      try {
+        enrolledState = userAuth.getEnrolledState(authType);
+        break;
+      } catch (e) {
+        continue;
+      }
     }
+
+    if (enrolledState === null) {
+      result.success('unknown');
+      return;
+    }
+
+    const currentDigest: number = enrolledState.credentialDigest;
+    const currentCount: number = enrolledState.credentialCount;
+
+    preferences.getPreferences(this.context!, PREFS_NAME).then((prefs: preferences.Preferences) => {
+      const storedDigest = prefs.getSync(KEY_CREDENTIAL_DIGEST, INVALID_VALUE) as number;
+      const storedCount = prefs.getSync(KEY_CREDENTIAL_COUNT, INVALID_VALUE) as number;
+
+      let status: string;
+
+      if (storedDigest === INVALID_VALUE) {
+        status = 'biometricValid';
+      } else if (currentDigest !== storedDigest) {
+        status = 'biometricChanged';
+      } else if (currentCount < storedCount) {
+        status = 'biometricChanged';
+      } else {
+        status = 'biometricValid';
+      }
+
+      prefs.putSync(KEY_CREDENTIAL_DIGEST, currentDigest);
+      prefs.putSync(KEY_CREDENTIAL_COUNT, currentCount);
+      prefs.flush();
+
+      result.success(status);
+    }).catch((err: BusinessError) => {
+      result.success('unknown');
+    });
   }
 }
