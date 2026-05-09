@@ -7,5 +7,9 @@
   "license": "MIT",
   "dependencies": {
     "@ohos/flutter_ohos": "file:libs/flutter.har"
+  },
+  "devDependencies": {
+    "@ohos/hvigor-ohos-plugin": "5.0.6",
+    "@ohos/hvigor-ohos": "5.0.6"
   }
 }
